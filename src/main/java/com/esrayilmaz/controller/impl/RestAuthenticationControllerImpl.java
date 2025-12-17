@@ -9,6 +9,7 @@ import com.esrayilmaz.controller.IRestAuthenticationController;
 import com.esrayilmaz.controller.RestBaseController;
 import com.esrayilmaz.controller.RootEntity;
 import com.esrayilmaz.dto.AuthRequest;
+import com.esrayilmaz.dto.AuthResponse;
 import com.esrayilmaz.dto.DtoUser;
 import com.esrayilmaz.service.IAuthenticationService;
 
@@ -24,6 +25,12 @@ public class RestAuthenticationControllerImpl extends RestBaseController impleme
 	@Override
 	public RootEntity<DtoUser> register(@Valid @RequestBody AuthRequest request) {
 		return ok(authenticationService.register(request));
+	}
+
+	@PostMapping("/authenticate")
+	@Override
+	public RootEntity<AuthResponse> authenticate(@Valid @RequestBody AuthRequest request) {
+		return ok(authenticationService.authenticate(request));
 	}
 
 }
