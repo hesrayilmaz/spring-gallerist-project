@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.esrayilmaz.dto.AuthRequest;
 import com.esrayilmaz.dto.AuthResponse;
 import com.esrayilmaz.dto.DtoUser;
+import com.esrayilmaz.dto.RefreshTokenRequest;
 import com.esrayilmaz.exception.BaseException;
 import com.esrayilmaz.exception.ErrorMessage;
 import com.esrayilmaz.exception.MessageType;
@@ -87,6 +88,30 @@ public class AuthenticationService implements IAuthenticationService {
 			new BaseException(new ErrorMessage(MessageType.USERNAME_OR_PASSWORD_INVALID, e.getMessage()));
 		}
 		return null;
+	}
+
+	@Override
+	public AuthResponse refreshToken(RefreshTokenRequest request) {
+		Optional<RefreshToken> optional = refreshTokenRepository.findByRefreshToken(request.getRefreshToken());
+		
+		if(optional.isEmpty()) {
+			throw new BaseException(new ErrorMessage(MessageType.REFRESH_TOKEN_NOT_FOUND, request.getRefreshToken()));
+		}
+		
+		if(!isRefreshTokenValid(optional.get().getExpiredDate())) {
+			throw new BaseException(new ErrorMessage(MessageType.REFRESH_TOKEN_IS_EXPIRED, request.getRefreshToken()));
+		}
+		
+		User user = optional.get().getUser();
+		String accessToken = jwtService.generateToken(user);
+		RefreshToken refreshToken = createRefreshToken(user);
+		RefreshToken savedRefreshToken = refreshTokenRepository.save(refreshToken);
+		
+		return new AuthResponse(accessToken, savedRefreshToken.getRefreshToken());
+	}
+	
+	public boolean isRefreshTokenValid(Date expiredDate) {
+		return new Date().before(expiredDate);
 	}
 
 	

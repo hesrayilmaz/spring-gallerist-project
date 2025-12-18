@@ -11,6 +11,7 @@ import com.esrayilmaz.controller.RootEntity;
 import com.esrayilmaz.dto.AuthRequest;
 import com.esrayilmaz.dto.AuthResponse;
 import com.esrayilmaz.dto.DtoUser;
+import com.esrayilmaz.dto.RefreshTokenRequest;
 import com.esrayilmaz.service.IAuthenticationService;
 
 import jakarta.validation.Valid;
@@ -31,6 +32,12 @@ public class RestAuthenticationControllerImpl extends RestBaseController impleme
 	@Override
 	public RootEntity<AuthResponse> authenticate(@Valid @RequestBody AuthRequest request) {
 		return ok(authenticationService.authenticate(request));
+	}
+
+	@PostMapping("/refreshToken")
+	@Override
+	public RootEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+		return ok(authenticationService.refreshToken(request));
 	}
 
 }
