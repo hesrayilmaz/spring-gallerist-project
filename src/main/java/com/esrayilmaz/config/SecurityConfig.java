@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.esrayilmaz.handler.AuthEntryPoint;
 import com.esrayilmaz.jwt.JWTAuthenticationFilter;
 
 @Configuration
@@ -25,6 +26,8 @@ public class SecurityConfig {
 	@Autowired
 	private JWTAuthenticationFilter jwtAuthenticationFilter;
 	
+	@Autowired
+	private AuthEntryPoint authEntryPoint;
 	
 	
 	public static final String[] SWAGGER_PATHS = {"/swagger-ui/**", "/v3/api-docs/**"};
@@ -36,6 +39,8 @@ public class SecurityConfig {
 		request.requestMatchers(AUTHENTICATE, REGISTER, REFRESH_TOKEN).permitAll()	//burdaki endpointlerde yetki kontrolu yapma, direkt izin ver
 		.requestMatchers(SWAGGER_PATHS).permitAll() 
 		.anyRequest().authenticated())									//onun dısındakilerde filtreden gecir diyoruz. 
+		.exceptionHandling(exception -> exception
+                .authenticationEntryPoint(authEntryPoint))
 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authenticationProvider(authenticationProvider)					//authenticationProvider olarak kendi yazdığımız authenticationProvider classını veriyoruz
 		.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);	//filtre olarak da kendi yazdigimiz filtre classi verdik				
