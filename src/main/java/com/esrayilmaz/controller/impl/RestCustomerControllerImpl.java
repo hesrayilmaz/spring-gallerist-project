@@ -1,6 +1,8 @@
 package com.esrayilmaz.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,6 +13,8 @@ import com.esrayilmaz.dto.customer.DtoCustomer;
 import com.esrayilmaz.dto.customer.DtoCustomerIU;
 import com.esrayilmaz.service.ICustomerService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/rest/api/customer")
 public class RestCustomerControllerImpl extends RestBaseController implements IRestCustomerController {
@@ -18,8 +22,9 @@ public class RestCustomerControllerImpl extends RestBaseController implements IR
 	@Autowired
 	private ICustomerService customerService;
 	
+	@PostMapping("/save")
 	@Override
-	public RootEntity<DtoCustomer> saveCustomer(DtoCustomerIU dtoCustomerIU) {
+	public RootEntity<DtoCustomer> saveCustomer(@Valid @RequestBody DtoCustomerIU dtoCustomerIU) {
 		return ok(customerService.saveCustomer(dtoCustomerIU));
 	}
 	
